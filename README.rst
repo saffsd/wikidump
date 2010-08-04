@@ -4,6 +4,15 @@ Introduction
 This module contains code for manipulating wikipedia dumps available from
 http://download.wikimedia.org/backup-index.html
 
+Configuration
+-------------
+
+Upon first importing the module, a file 'wikidump.cfg' will be created.
+Modify the paths in this file to point to your data. 
+
+- scratch : where indices are stores (must be writeable)
+- xml_dumps : where the xml dumps are located (can be read-only)
+
 Credits
 -------
 
