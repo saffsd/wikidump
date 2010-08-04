@@ -27,7 +27,7 @@ class Dump:
     self.xml_path = os.path.abspath(xml_path)
     self.xml_file = open(self.xml_path)
     # May want to hash the file instead for portability
-    path_hash = hashlib.sha1(self.xml_path).hexdigest()
+    path_hash = hashlib.sha1(os.path.basename(self.xml_path)).hexdigest()
     self.cache_path = os.path.join(config.get('paths','scratch'), path_hash)
 
     self.logger.info("============================================")
