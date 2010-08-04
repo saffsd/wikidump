@@ -1,5 +1,8 @@
-Introduction
+wikidump
 ==========================
+
+Introduction
+------------
 
 This module contains code for manipulating wikipedia dumps available from
 http://download.wikimedia.org/backup-index.html
@@ -12,6 +15,13 @@ Modify the paths in this file to point to your data.
 
 - scratch : where indices are stores (must be writeable)
 - xml_dumps : where the xml dumps are located (can be read-only)
+
+Usage
+-----
+
+In addition to python modules, wikidump also comes with a command-line
+tool to quickly access wikidump functionality. Run `wikidump help` 
+for a list of options.
 
 Credits
 -------
