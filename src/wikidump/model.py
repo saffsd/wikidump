@@ -111,7 +111,7 @@ class Dump:
       
   def get_page_index(self, title):
     "Look up the index of a page based on its title"
-    return self.page_titles[title.encode('utf8')] 
+    return self.page_titles[title] 
 
   def get_page_contents(self, index):
     "Get the full text of a page by index"
