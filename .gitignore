@@ -9,3 +9,4 @@ develop-eggs
 tmp
 build
 dist
+deb_dist
