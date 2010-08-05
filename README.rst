@@ -7,6 +7,30 @@ Introduction
 This module contains code for manipulating wikipedia dumps available from
 http://download.wikimedia.org/backup-index.html
 
+
+Installation
+------------
+
+This module is published on `PyPI`_ and can be installed with easy_install
+
+For example:
+
+  easy_install wikidump
+
+Alternatively, you can use pip:
+
+  pip install wikidump
+
+I highly recommend using `virtualenv`_ to isolate the install environment.
+
+For those on ubuntu systems, a built package is available in a `PPA`_. 
+Please go to the PPA for details on how to install from it.
+
+
+.. _PyPI: http://pypi.python.org/pypi/wikidump
+.. _virtualenv: http://pypi.python.org/pypi/virtualenv
+.. _PPA: https://launchpad.net/~saffsd/+archive/wikidump
+
 Configuration
 -------------
 
