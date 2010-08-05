@@ -17,7 +17,7 @@ category_identifier =\
   , 'de' : 'Kategorie'
   , 'ja' : 'Category'
   , 'it' : 'Categoria'
-  , 'ru' : 'Category'
+  , 'ru' : 'Категория'
   , 'pl' : 'Kategoria'
   , 'nl' : 'Categorie'
   , 'sv' : 'Kategori'
