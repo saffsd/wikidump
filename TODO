@@ -1,3 +1,4 @@
  - Integrate wp-download module to provide dump download functionality onboard
- - documentation!
+ - sphinx documentation!
  - Fix dump id mechanism to only hash basename instead of entire path.
+ - paver automation for stdeb 

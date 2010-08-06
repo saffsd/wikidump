@@ -6,10 +6,9 @@ README = open(os.path.join(here, 'README.rst')).read()
 NEWS = open(os.path.join(here, 'NEWS.txt')).read()
 
 
-version = '0.1'
+version = '0.1.1'
 
 install_requires = [
-    'numpy >= 1.3.0'
     # List your project dependencies here.
     # For more details, see:
     # http://packages.python.org/distribute/setuptools.html#declaring-dependencies
@@ -22,6 +21,13 @@ setup(name='wikidump',
     long_description=README + '\n\n' + NEWS,
     classifiers=[
       # Get strings from http://pypi.python.org/pypi?%3Aaction=list_classifiers
+      "Development Status :: 3 - Alpha"
+    , "Environment :: Console"
+    , "Intended Audience :: Science/Research"
+    , "License :: OSI Approved :: GNU General Public License (GPL)"
+    , "Operating System :: OS Independent"
+    , "Programming Language :: Python"
+    , "Topic :: Scientific/Engineering :: Information Analysis"
     ],
     keywords='wikipedia',
     author='Marco Lui',
