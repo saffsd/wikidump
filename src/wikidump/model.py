@@ -167,6 +167,8 @@ class Page:
       self.text = ''
 
   def lang_equiv(self, prefix):
+    """ Returns the page title for the equivalent page in the given language prefix
+    """
     lang_links = dict(regexps.lang_link.findall(self.text))
     try:
       return lang_links[prefix]
@@ -174,8 +176,11 @@ class Page:
       return None
 
   def categories(self):
+    """ Returns the set of categories this page is member of.
+        changed from 0.1 : was previously a list. Do not want duplicates.
+    """
     try: 
-      return list(zip(*regexps.category_link.findall(self.text))[0])
+      return set(zip(*regexps.category_link.findall(self.text))[0])
     except IndexError: #No categories
       return []
 
