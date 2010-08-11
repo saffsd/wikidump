@@ -2,6 +2,8 @@
 Code useful for preparing datasets from wikidump data
 """
 import re
+import os
+import shutil
 
 import regexps
 import utils
@@ -23,7 +25,7 @@ def paragraphs(text, minsize = 0):
 
 def lang_dist(langs):
   "mapping of the distribution of documents in a given set of languages"
-  dumps = wikidump.load_dumps(langs)
+  dumps = utils.load_dumps(langs)
   dist = dict((d.get_dumpfile_prefix(), d.metadata['size']) for d in dumps.values())
   return dist
 
