@@ -3,7 +3,6 @@ import csv
 import os.path
 import logging
 import optparse
-logging.basicConfig(level=logging.INFO)
 
 logger = logging.getLogger('wikidump')
 
