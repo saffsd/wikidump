@@ -17,3 +17,10 @@ category_name = re.compile(r"(?P<keyword>("+category_keywords+")):(?P<category>.
 redirect = re.compile(r"\#REDIRECT (?P<target>.*)")
 
 template = re.compile(r"\{\{(?P<target>.*?)\}\}")
+
+# Syntax-matching expressions developed for WikiTweets dataset
+syntax = re.compile(r'\||\{|\}|==|\*|#|<|\(|:|;')
+tripquote = re.compile(r"'''(?P<name>.*?)'''")
+doubquote = re.compile(r"''(?P<name>.*?)''")
+langref = re.compile(r'[\w-]+:')
+assoc   = re.compile(r'\w+=')
