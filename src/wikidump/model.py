@@ -6,6 +6,7 @@ import shelve
 import hashlib
 import os
 import re
+import bz2
 import logging
 import xml.etree.ElementTree as etree
 
@@ -23,19 +24,37 @@ class Dump:
     path = os.path.join(self.cache_path, name)
     return shelve.open(path)
 
-  def __init__(self, xml_path, build_index=False):
-    self.xml_path = os.path.abspath(xml_path)
-    self.xml_file = open(self.xml_path)
-    # May want to hash the file instead for portability
-    path_hash = hashlib.sha1(os.path.basename(self.xml_path)).hexdigest()
+  def __init__(self, dump_path, build_index=False):
+    self.dump_path = os.path.abspath(dump_path)
+    base, ext = map(str.lower, os.path.splitext(dump_path))
+    if ext == '.bz2':
+      # Need to deal with BZ2 compressed dump
+      self.dump_file = bz2.BZ2File(self.dump_path)
+    else:
+      self.dump_file = open(self.dump_path)
+
+    # TODO: May want to hash the file (maybe the first portion) instead for portability
+    path_hash = hashlib.sha1(os.path.basename(self.dump_path)).hexdigest()
     self.cache_path = os.path.join(config.get('paths','scratch'), path_hash)
 
+    # Avoid having different hashes for the .bz2 and non-.bz2 version 
+    if not ext == '.bz2':
+      if not os.path.exists(self.cache_path):
+        bz2_path_hash = hashlib.sha1(os.path.basename(self.dump_path)+'.bz2').hexdigest()
+        bz2_cache_path = os.path.join(config.get('paths','scratch'), bz2_path_hash)
+        if os.path.exists(bz2_cache_path):
+          self.cache_path = bz2_cache_path
+
+
+
     self.logger.info("============================================")
-    self.logger.info("Loading data for %s", self.xml_path)
+    self.logger.info("Loading data for %s", self.dump_path)
 
     if not os.path.exists(self.cache_path):
       self.logger.info("Creating %s", self.cache_path)
       os.mkdir(self.cache_path)
+    else:
+      self.logger.debug("cache exists at %s", self.cache_path)
 
     # Open a metadata shelf
     self.metadata = self._open_shelf('metadata')
@@ -44,7 +63,11 @@ class Dump:
     try:
       size = self.metadata['size']
     except KeyError:
-      size = int(os.popen("grep '<page>' %s | wc -l" % self.xml_path).read())
+      # TODO: Replace this with a pythonic solution
+      if ext == '.bz2':
+        size = int(os.popen("bzcat %s | grep '<page>' | wc -l" % self.dump_path).read())
+      else:
+        size = int(os.popen("grep '<page>' %s | wc -l" % self.dump_path).read())
       self.metadata['size'] = size
       self.logger.info("Found %d pages", size)
     self.logger.debug("Size: %d pages", size)
@@ -55,7 +78,7 @@ class Dump:
 
     if build_index and len(self.page_offsets) < size:
       self.logger.info("Calculating page offsets")
-      parser = PageOffsetParser(open(self.xml_path), self.page_offsets) 
+      parser = PageOffsetParser(self.dump_file, self.page_offsets) 
       parser.run()
       self.page_offsets.sync()
     else:
@@ -96,7 +119,7 @@ class Dump:
 
   def get_raw(self, index):
     "Get raw xml dump data for a given index"
-    f = self.xml_file
+    f = self.dump_file
 
     start_offset = self.page_offsets[str(index+1)]
     f.seek(start_offset)
@@ -143,7 +166,7 @@ class Dump:
 
   def get_dumpfile_prefix(self):
     "Return the prefix code associated with the filename"
-    filename = os.path.basename(self.xml_path)
+    filename = os.path.basename(self.dump_path)
     return regexps.dumpfile_name.match(filename).groups()[0]
 
 class Page:
