@@ -12,12 +12,22 @@ logger = logging.getLogger('wikidump.utils')
 
 xml_path = config.get('paths','xml_dumps')
 
-# TODO: Update this, need to eliminate the assumption that all dumps are in the same folder
-#all_prefixes =  [    regexps.dumpfile_name.match(f).group(1) 
-#                for  f 
-#                in   os.listdir(xml_path) 
-#                if   regexps.dumpfile_name.match(f)
-#                ]
+def find_dumps(path):
+  def visit(arg, dirname, names):
+    for name in names:
+      match = regexps.dumpfile_name.match(name)
+      if match:
+        arg.append(os.path.join(dirname, name))
+
+  paths = []
+  os.path.walk(path, visit, paths)
+
+  dump_paths = {}
+  for p in paths:
+    match = regexps.dumpfile_name.search(os.path.basename(p))
+    if match.group('prefix') in langs:
+      dump_paths[match.group('prefix')] = p
+  return dump_paths
 
 def load_dumps(langs=None, dump_path=None, build_index=False):
   "Load the dumps, and take note of their size"
