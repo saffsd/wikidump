@@ -6,11 +6,13 @@ import optparse
 
 logger = logging.getLogger('wikidump')
 
-from wikidump.utils import load_dumps
+from utils import load_dumps, find_dumps
+from model import Dump
 
 def main():
+  logging.basicConfig(level=logging.DEBUG)
   if len(sys.argv) < 2:
-    logger.error("Must specify a command!")
+    logger.error("Must specify a command! Try 'help'")
     sys.exit(-1)
 
   command = sys.argv[1]
@@ -22,34 +24,38 @@ def main():
     logger.info("    stats             : print statistics in a tab-delimited CSV format")
     logger.info("    categories [lang] : list categories for 'lang', and the number of documents in each")
 
+  elif command == 'list':
+    # List available dumps
+    dumps = find_dumps()
+    # TODO: Print if an index exists
+    for key in sorted(dumps):
+      print "  %-20s%s" % (key, dumps[key])
+    
   elif command == 'index':
     # Build indices
     load_dumps(build_index=True)
 
   elif command == 'stats':
-    # Display statistics
     root_logger = logging.getLogger()
-    root_logger.setLevel(logging.ERROR)
-
-    dumps = load_dumps()
-    sizes = dict((d.get_dumpfile_prefix(), d.metadata['size']) for d in dumps.values())
+    root_logger.level = logging.ERROR
+    # Display statistics
+    paths = find_dumps()
+    sizes = dict((k, len(Dump(p))) for k, p in paths.iteritems())
 
     fields = ['lang', 'filename', 'pages', 'categories']
     outfile = csv.DictWriter(sys.stdout, fields, delimiter='\t')
     for p in sorted(sizes, key=sizes.get, reverse=True):
+      dump = Dump(paths[p])
       d = dict\
             ( lang=p
-            , filename= os.path.basename(dumps[p].xml_path)
+            , filename=os.path.basename(paths[p])
             , pages=sizes[p]
-            , categories=len(dumps[p].categories)
+            , categories=len(dump.categories)
             )
       outfile.writerow(d)
 
   elif command == 'categories':
     # Dump category distribution
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.ERROR)
-
     parser = optparse.OptionParser()
     parser.add_option("-l", "--language", dest="lang", help="Relevant language prefix")
     options, args = parser.parse_args(sys.argv[2:])

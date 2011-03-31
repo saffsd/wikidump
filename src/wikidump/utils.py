@@ -12,7 +12,11 @@ logger = logging.getLogger('wikidump.utils')
 
 xml_path = config.get('paths','xml_dumps')
 
-def find_dumps(path):
+def find_dumps(langs=None, path=xml_path):
+  """
+  Find dumps existing under a given point in the filesystem.
+  Takes an optional argument which specifies the language codes to look for.
+  """
   def visit(arg, dirname, names):
     for name in names:
       match = regexps.dumpfile_name.match(name)
@@ -25,26 +29,18 @@ def find_dumps(path):
   dump_paths = {}
   for p in paths:
     match = regexps.dumpfile_name.search(os.path.basename(p))
-    if match.group('prefix') in langs:
+    if langs is None or match.group('prefix') in langs:
       dump_paths[match.group('prefix')] = p
   return dump_paths
 
 def load_dumps(langs=None, dump_path=None, build_index=False):
-  "Load the dumps, and take note of their size"
-  # Take note that we will end up loading all the dumps we have for a given language
-  # but only returning the last one we find. 
-  # TODO: Handle different-dated dumps of the same language
-  if langs is None:
-    langs = all_prefixes
   if dump_path is None:
     dump_path = xml_path
   dumps = {}
-  for path in os.listdir(dump_path):
-    if not re.match('|'.join(langs), path): continue
-    full_path = os.path.join(dump_path, path)
-    d = model.Dump(full_path, build_index=build_index)
-    prefix = d.get_dumpfile_prefix() 
-    dumps[prefix] = d
+  paths = find_dumps(langs, dump_path)
+  for lang in paths:
+    if langs is not None and lang not in langs: continue
+    dumps[lang] = model.Dump(paths[lang], build_index=build_index)
   return dumps
 
 def category_map(dump):

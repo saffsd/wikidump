@@ -169,6 +169,14 @@ class Dump:
     filename = os.path.basename(self.dump_path)
     return regexps.dumpfile_name.match(filename).groups()[0]
 
+  @property
+  def prefix(self):
+    return self.get_dumpfile_prefix()
+
+  def __len__(self):
+    return self.metadata['size']
+
+
 class Page:
   """
   Represents a single page in a wikidump
