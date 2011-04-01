@@ -139,7 +139,11 @@ class Dump:
   def get_page_contents(self, index):
     "Get the full text of a page by index"
     tree = etree.fromstring(self.get_raw(index))
-    return tree.find('revision').find('text').text.encode('utf8')
+    text = tree.find('revision').find('text').text
+    if text is None:
+      return ''
+    else:
+      return text.encode('utf8')
 
   def get_page_length(self, index):
     "Look up the length of a page given an index"
