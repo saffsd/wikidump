@@ -43,7 +43,7 @@ def main():
     sizes = dict((k, len(Dump(p))) for k, p in paths.iteritems())
 
     fields = ['lang', 'filename', 'pages', 'categories']
-    outfile = csv.DictWriter(sys.stdout, fields, delimiter='\t')
+    outfile = csv.DictWriter(sys.stdout, fields)
     for p in sorted(sizes, key=sizes.get, reverse=True):
       dump = Dump(paths[p])
       d = dict\
