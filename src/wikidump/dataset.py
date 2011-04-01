@@ -9,7 +9,6 @@ import regexps
 import utils
 
 mediawiki_ignore_stringheads = '{}|=*#:'
-
 def remove_mediawiki_syntax(text):
   "Remove non-content from a mediawiki page"
   text = regexps.redirect.sub('',text) # Remove redirects
@@ -17,7 +16,22 @@ def remove_mediawiki_syntax(text):
   text = regexps.template.sub('',text) # Remove templates TODO: Multi-line?
   text = regexps.intrawiki_link.sub(lambda x: x.group('anchor'), text) # Replace intrawiki links with anchor text
   text = re.sub('\n\n+', '\n\n', text) # Collapse multiple newlines
-  return text.strip()
+  para = paragraphs(text.strip()) # split into paragraphs
+
+  content = []
+  for p in para:
+    p = re.sub('\s',' ', p)
+    if regexps.langref.match(p): continue
+    if regexps.assoc.match(p): continue
+    if regexps.syntax.search(p): continue
+    p = regexps.tripquote.sub('\g<name>',p)
+    p = regexps.doubquote.sub('\g<name>',p)
+    u = p.decode('utf8').strip()
+    if regexps.category_name.search(u): continue
+    content.append(u)
+
+  retval = '\n\n'.join(u.encode('utf8') for u in content) + '\n'
+  return retval
 
 def paragraphs(text, minsize = 0):
   "Split text into paragraphs"
