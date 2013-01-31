@@ -41,7 +41,17 @@ def build_index(langs=None, dump_path=None):
     if langs is not None and lang not in langs: continue
     model.Dump(paths[lang], build_index=build_index)
 
-def load_dumps(langs=None, dump_path=None, build_index=False):
+
+def load_dump(lang, dump_path=None, *args, **kwargs):
+  """
+  Convenience method for loading a dump for a single language.
+  """
+  if dump_path is None:
+    dump_path = xml_path
+  paths = find_dumps([lang], dump_path)
+  return model.Dump(paths[lang], *args, **kwargs)
+
+def load_dumps(langs=None, dump_path=None, *args, **kwargs):
   if dump_path is None:
     dump_path = xml_path
   dumps = {}
