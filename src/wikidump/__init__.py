@@ -95,14 +95,12 @@ def main():
     else:
       raise ValueError("no languages to process")
 
-    dumps = load_dumps(langs, build_index=True)
-
     now = time.time()
     path = os.path.join(config.get('paths','scratch'), 'sample-{0}.tar'.format(args.number))
 
     with tarfile.open(path, 'w') as tar:
       for lang in langs:
-        dump = dumps[lang]
+        dump = load_dumps([lang], build_index=True)
 
         chosen = set() #keeps track of ids that have been chosen
         used = set() #keeps track of ids that have been examined
