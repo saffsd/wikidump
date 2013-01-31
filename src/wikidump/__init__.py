@@ -6,7 +6,7 @@ import argparse
 
 logger = logging.getLogger('wikidump')
 
-from utils import build_index, load_dumps, find_dumps
+from utils import build_index, load_dump, load_dumps, find_dumps
 from model import Dump
 from config import config
 
@@ -102,7 +102,7 @@ def main():
 
     with tarfile.open(path, 'w') as tar:
       for lang in langs:
-        dump = load_dumps([lang], build_index=build_index)
+        dump = load_dump(lang, build_index=build_index, unpack=True)
 
         chosen = set() #keeps track of ids that have been chosen
         used = set() #keeps track of ids that have been examined
