@@ -113,6 +113,10 @@ def main():
           try:
             id = random.choice(xrange(dump.metadata['size']))
             if id in used:
+              if len(used) >= dump.metadata['size']:
+                # We have run out of documents to consider. Bail out.
+                logger.warning("ran out of documents for %s", lang)
+                break
               raise ReTry("already considered {0}".format(id))
 
             used.add(id)
