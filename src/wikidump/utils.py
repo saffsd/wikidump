@@ -63,7 +63,7 @@ def load_dumps(langs=None, dump_path=None, *args, **kwargs):
   paths = find_dumps(langs, dump_path)
   for lang in paths:
     if langs is not None and lang not in langs: continue
-    dumps[lang] = model.Dump(paths[lang], build_index=build_index)
+    dumps[lang] = model.Dump(paths[lang], *args, **kwargs)
   return dumps
 
 def category_map(dump):
