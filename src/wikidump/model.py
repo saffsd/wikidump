@@ -8,12 +8,14 @@ import os
 import re
 import bz2
 import logging
+import tempfile
 import xml.etree.ElementTree as etree
 
 import regexps
 import utils
 from config import config
 from parser import PageOffsetParser
+from common import Timer
 
 
 class Dump:
@@ -24,12 +26,27 @@ class Dump:
     path = os.path.join(self.cache_path, name)
     return shelve.open(path)
 
-  def __init__(self, dump_path, build_index=False):
+  def __init__(self, dump_path, build_index=False, unpack=False):
     self.dump_path = os.path.abspath(dump_path)
     base, ext = map(str.lower, os.path.splitext(dump_path))
     if ext == '.bz2':
       # Need to deal with BZ2 compressed dump
-      self.dump_file = bz2.BZ2File(self.dump_path)
+      if unpack:
+        # unpack the BZ2File to a tempfile beforehand. This is useful because
+        # of the random access we require.
+        with bz2.BZ2File(self.dump_path) as dump_bz2, Timer() as t:
+          dump_txt = tempfile.TemporaryFile()
+          self.logger.info("Unpacking %s to a temporary file", self.dump_path)
+          while True:
+            chunk = dump_bz2.read(1024 * 1024 * 10) # Read in 10MB chunks
+            if chunk:
+              dump_txt.write(chunk)
+            else:
+              break
+        self.logger.info("Done unpacking (took %.1fs)", t.elapsed)
+        self.dump_file = dump_txt
+      else:
+        self.dump_file = bz2.BZ2File(self.dump_path)
     else:
       self.dump_file = open(self.dump_path)
 
