@@ -83,6 +83,7 @@ def main():
     parser.add_argument("--clean", action="store_true", default=False, help="apply heuristic mediawiki markup removal")
     parser.add_argument("--minlen", help="Minimum length in bytes", type=int)
     parser.add_argument("--langs", help="path to a file containing a list of language prefixes") 
+    parser.add_argument("--skip_index", action="store_true", default=False, help="skip indexing stage, assumes indexing has already been performed")
     args = parser.parse_args(sys.argv[2:])
 
     if args.language and args.langs:
@@ -97,10 +98,11 @@ def main():
 
     now = time.time()
     path = os.path.join(config.get('paths','scratch'), 'sample-{0}.tar'.format(args.number))
+    build_index = not(args.skip_index)
 
     with tarfile.open(path, 'w') as tar:
       for lang in langs:
-        dump = load_dumps([lang], build_index=True)
+        dump = load_dumps([lang], build_index=build_index)
 
         chosen = set() #keeps track of ids that have been chosen
         used = set() #keeps track of ids that have been examined
