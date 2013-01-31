@@ -6,7 +6,7 @@ import optparse
 
 logger = logging.getLogger('wikidump')
 
-from utils import load_dumps, find_dumps
+from utils import build_index, load_dumps, find_dumps
 from model import Dump
 
 def main():
@@ -33,7 +33,7 @@ def main():
     
   elif command == 'index':
     # Build indices
-    load_dumps(build_index=True)
+    build_index()
 
   elif command == 'stats':
     root_logger = logging.getLogger()
