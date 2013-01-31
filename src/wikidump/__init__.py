@@ -2,7 +2,7 @@ import sys
 import csv
 import os.path
 import logging
-import optparse
+import argparse 
 
 logger = logging.getLogger('wikidump')
 
@@ -56,11 +56,11 @@ def main():
 
   elif command == 'categories':
     # Dump category distribution
-    parser = optparse.OptionParser()
-    parser.add_option("-l", "--language", dest="lang", help="Relevant language prefix")
-    options, args = parser.parse_args(sys.argv[2:])
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-l", "--language", dest="lang", help="Relevant language prefix")
+    args = parser.parse_args(sys.argv[2:])
 
-    dump = load_dumps([options.lang], build_index=True)[options.lang]
+    dump = load_dumps([args.lang], build_index=True)[args.lang]
     cats = dump.categories
 
     for c in sorted(cats, key=lambda x:len(cats[x]), reverse=True):
