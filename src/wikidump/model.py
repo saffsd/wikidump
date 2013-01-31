@@ -37,6 +37,7 @@ class Dump:
         with bz2.BZ2File(self.dump_path) as dump_bz2, Timer() as t:
           dump_txt = tempfile.TemporaryFile()
           self.logger.info("Unpacking %s to a temporary file", self.dump_path)
+          self.logger.debug("TEMPDIR is %s", tempfile.tempdir)
           while True:
             chunk = dump_bz2.read(1024 * 1024 * 10) # Read in 10MB chunks
             if chunk:

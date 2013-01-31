@@ -3,6 +3,7 @@ import csv
 import os.path
 import logging
 import argparse 
+import tempfile
 
 logger = logging.getLogger('wikidump')
 
@@ -13,7 +14,8 @@ from config import config
 class ReTry(Exception): pass
 
 def main():
-  logging.basicConfig(level=logging.DEBUG)
+  # TODO: make the loglevel configurable
+  logging.basicConfig(level=logging.INFO)
   if len(sys.argv) < 2:
     logger.error("Must specify a command! Try 'help'")
     sys.exit(-1)
@@ -80,6 +82,7 @@ def main():
     parser.add_argument("-l", "--language", action="append", help="Relevant language prefix")
     parser.add_argument("-n", "--number", help="Number of files to select", type=int)
     parser.add_argument("-o", "--output", help="Output file (will be in tbz format)", default="sample.tbz")
+    parser.add_argument("-t", "--temp", metavar='TEMPDIR', help="store temporary files in TEMPDIR")
     parser.add_argument("--clean", action="store_true", default=False, help="apply heuristic mediawiki markup removal")
     parser.add_argument("--minlen", help="Minimum length in bytes", type=int)
     parser.add_argument("--langs", help="path to a file containing a list of language prefixes") 
@@ -95,6 +98,8 @@ def main():
       langs = map(str.strip, open(args.langs))
     else:
       raise ValueError("no languages to process")
+
+    tempfile.tempdir = args.temp
 
     now = time.time()
     path = os.path.join(config.get('paths','scratch'), 'sample-{0}.tar'.format(args.number))
