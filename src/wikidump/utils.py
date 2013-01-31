@@ -33,6 +33,14 @@ def find_dumps(langs=None, path=xml_path):
       dump_paths[match.group('prefix')] = p
   return dump_paths
 
+def build_index(langs=None, dump_path=None):
+  if dump_path is None:
+    dump_path = xml_path
+  paths = find_dumps(langs, dump_path)
+  for lang in paths:
+    if langs is not None and lang not in langs: continue
+    model.Dump(paths[lang], build_index=build_index)
+
 def load_dumps(langs=None, dump_path=None, build_index=False):
   if dump_path is None:
     dump_path = xml_path
