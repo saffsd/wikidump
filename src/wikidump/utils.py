@@ -52,6 +52,11 @@ def load_dump(lang, dump_path=None, *args, **kwargs):
   return model.Dump(paths[lang], *args, **kwargs)
 
 def load_dumps(langs=None, dump_path=None, *args, **kwargs):
+  """
+  Convenience method for loading dumps for a number of languages at one go.
+  The advantage of this over load_dumps is that this method only calls find_dumps
+  once.
+  """
   if dump_path is None:
     dump_path = xml_path
   dumps = {}
