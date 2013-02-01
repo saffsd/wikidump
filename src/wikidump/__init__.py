@@ -107,7 +107,11 @@ def main():
 
     with tarfile.open(path, 'w') as tar:
       for lang in langs:
-        dump = load_dump(lang, build_index=build_index, unpack=True)
+        try:
+          dump = load_dump(lang, build_index=build_index, unpack=True)
+        except KeyError:
+          logger.error("do not have a dump for %s, skipping", lang)
+          continue
 
         chosen = set() #keeps track of ids that have been chosen
         used = set() #keeps track of ids that have been examined
@@ -167,6 +171,7 @@ def main():
           except ReTry, e:
             logger.debug("Reject: %s", e.args[0])
             continue
+        logger.info("chose %d documents for %s", len(chosen), lang)
         
     # Done with the tarfile, now to bzip it
     subprocess.call(['bzip2',path])
