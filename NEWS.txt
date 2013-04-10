@@ -13,3 +13,9 @@ News
 
 * Initial release of wikidump module 
 
+0.1.3
+-----
+
+*Release date: 10-Apr-2013*
+
+* Rewrote CLI
