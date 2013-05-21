@@ -94,7 +94,9 @@ def randomsample(args):
   tempfile.tempdir = args.temp
 
   now = time.time()
-  path = os.path.join(config.get('paths','scratch'), 'sample-{0}.tar'.format(args.number))
+  handle, path = tempfile.mkstemp(suffix='.tar', prefix='sample-{0}-'.format(args.number))
+  os.close(handle)
+  #path = os.path.join(args.temp, 'sample-{0}.tar'.format(args.number))
   build_index = not(args.skip_index)
 
   with tarfile.open(path, 'w') as tar:
