@@ -149,7 +149,7 @@ def randomsample(args):
             document = page.text
 
           if len(document) < args.minlen: 
-            raise ReTry, "Too short ({0}<{1})".format(len(text), args.minlen)
+            raise ReTry, "Too short ({0}<{1})".format(len(document), args.minlen)
           
           logger.debug("adding {0}".format(id))
           info = tarfile.TarInfo('{0}/{1}'.format(lang, id))
